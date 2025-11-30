@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Subject Form{% endblock %}
+{% block content %}
+
+<h2>{{ form.instance.pk|yesno:"Edit Subject,Add Subject" }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button class="btn btn-success mt-3">Save</button>
+</form>
+
+{% endblock %}

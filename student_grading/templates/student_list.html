@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+
+<h2>Students</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Name</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for s in students %}
+    <tr>
+        <td>{{ s.name }}</td>
+        <td>
+            <button class="btn btn-sm btn-primary"
+                onclick="toggleDetails({{ s.id }}, '{% url 'student_detail' s.id %}')">
+            View Subjects & Scores
+            </button>
+        </td>
+    </tr>
+
+    <tr id="details-{{ s.id }}" style="display: none;">
+        <td colspan="2">
+            <div id="content-{{ s.id }}">Loading...</div>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<script>
+function toggleDetails(studentId, url) {
+    let row = document.getElementById("details-" + studentId);
+    let contentDiv = document.getElementById("content-" + studentId);
+
+    if (row.style.display === "none") {
+        row.style.display = "";
+        contentDiv.innerHTML = "Loading...";
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            if (!data.scores || data.scores.length === 0) {
+                contentDiv.innerHTML = "<p>No subjects or scores found.</p>";
+                return;
+            }
+
+            let totalScore = 0;
+            let html = `<table class="table table-sm table-striped">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Course</th>
+                                <th>Lecturer</th>
+                                <th>Score</th>
+                            </tr>`;
+
+            data.scores.forEach(item => {
+                html += `<tr>
+                            <td>${item.subject || "-"}</td>
+                            <td>${item.course || "-"}</td>
+                            <td>${item.lecturer || "-"}</td>
+                            <td>${item.score !== null ? item.score : "-"}
+                                <a href="/grading/scores/${item.id}/edit/" class="btn btn-sm btn-warning">Edit</a>    
+                            </td>
+                        </tr>`;
+                totalScore += item.score || 0;
+            });
+
+            let avgScore = (totalScore / data.scores.length).toFixed(2);
+            html += `<tr>
+                        <td colspan="3" class="text-end"><strong>Average Score:</strong></td>
+                        <td><strong>${avgScore}</strong></td>
+                    </tr></table>`;
+
+            contentDiv.innerHTML = html;
+        })
+        .catch(err => {
+            contentDiv.innerHTML = `<p>Error loading scores: ${err}</p>`;
+            console.error(err);
+        });
+
+    } 
+    else {
+        row.style.display = "none";
+    }
+}
+
+</script>
+
+{% endblock %}

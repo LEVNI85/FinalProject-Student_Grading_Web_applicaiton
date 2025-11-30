@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Lecturers{% endblock %}
+{% block content %}
+<h2>Lecturers</h2>
+
+<table class="table table-bordered">
+    <tr><th>Name</th><th>Email</th></tr>
+    {% for l in lecturers %}
+    <tr>
+        <td>{{ l.name }}</td>
+        <td>{{ l.email }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
