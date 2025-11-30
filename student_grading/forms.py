@@ -18,3 +18,20 @@ class ScoreForm(forms.ModelForm):
         widgets = {
             'score': forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'max': 100}),
         }
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['name', 'course']
+
+class LecturerForm(forms.ModelForm):
+    class Meta:
+        model = Lecturer
+        fields = ['name', 'email']
+
+class AssignSubjectForm(forms.ModelForm):
+    class Meta:
+        model = Score
+        fields = ['student', 'subject', 'score']
+
+        

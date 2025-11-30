@@ -3,6 +3,8 @@
 {% block content %}
 <h2>Lecturers</h2>
 
+<a href="{% url 'lecturer_create' %}" class="btn btn-primary mb-3">Add Lecturer</a>
+
 <table class="table table-bordered">
     <tr><th>Name</th><th>Email</th></tr>
     {% for l in lecturers %}

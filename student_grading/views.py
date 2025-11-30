@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Subject,Lecturer,Course,Student,Score
-from .forms import SubjectForm, ScoreForm
+from .forms import SubjectForm, ScoreForm, StudentForm, LecturerForm, AssignSubjectForm
 from django.http import JsonResponse
 
 @login_required
@@ -52,7 +52,6 @@ def subject_delete(request, pk):
 
     return render(request, "subject_confirm_delete.html", {"subject": subject})
 
-#------------------------------------
 @login_required
 def lecturer_list(request):
     lecturers = Lecturer.objects.all()
@@ -97,3 +96,91 @@ def score_update(request, pk):
         form = ScoreForm(instance=score)
 
     return render(request, 'score_form.html', {'form': form, 'score': score})
+
+@login_required
+def student_create(request):
+    if request.method == "POST":
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student Added!")
+            return redirect("student_list")
+    else:
+        form = StudentForm()
+
+    return render(request, "student_form.html", {'form':form})
+
+@login_required
+def student_update(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    
+    if request.method == "POST":
+        form = StudentForm(request.POST, instance = student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student Updated!")
+            return redirect("student_list")
+        else:
+            form = StudentForm(instance = student)
+
+        return render(request, "student_form.html", {'form':form, 'student':student})
+    
+@login_required
+def student_delete(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+
+    if request.method == "POST":
+        student.delete()
+        messages.success(request, "Student deleted!")
+        return redirect("student_list")
+
+    return render(request, "student_confirm_delete.html", {"student": student})
+
+@login_required
+def assign_subject(request):
+    if request.method == "POST":
+        form = AssignSubjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Subject assigned!")
+            return redirect("student_list")
+    else:
+        form = AssignSubjectForm()
+
+    return render(request, "assign_subject_form.html", {"form": form})
+
+@login_required
+def lecturer_create(request):
+    if request.method == "POST":
+        form = LecturerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Lecturer added!")
+            return redirect("lecturer_list")
+    else:
+        form = LecturerForm()
+    return render(request, "lecturer_form.html", {"form": form})
+
+@login_required
+def lecturer_update(request, pk):
+    lecturer = get_object_or_404(Lecturer, pk=pk)
+    if request.method == "POST":
+        form = LecturerForm(request.POST, instance=lecturer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Lecturer updated!")
+            return redirect("lecturer_list")
+    else:
+        form = LecturerForm(instance=lecturer)
+
+    return render(request, "lecturer_form.html", {"form": form})
+
+@login_required
+def lecturer_delete(request, pk):
+    lecturer = get_object_or_404(Lecturer, pk=pk)
+    if request.method == "POST":
+        lecturer.delete()
+        messages.success(request, "Lecturer deleted!")
+        return redirect("lecturer_list")
+
+    return render(request, "lecturer_confirm_delete.html", {"lecturer": lecturer})

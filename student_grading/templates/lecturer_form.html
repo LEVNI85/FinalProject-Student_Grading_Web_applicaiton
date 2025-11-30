@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Lecturer Form{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>{{ lecturer|default:"Add Lecturer" }}</h2>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'lecturer_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}
