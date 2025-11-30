@@ -122,6 +122,19 @@ USE_I18N = True
 
 USE_TZ = True
 
+import os
+
+ALLOWED_HOSTS = [".onrender.com", "localhost", "127.0.0.1"]
+
+# Staging / production DB იქნება Render-ის ENV variables
+if os.getenv("DATABASE_URL"):
+    import dj_database_url
+    DATABASES = {
+        "default": dj_database_url.config(conn_max_age=600, ssl_require=True)
+    }
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
